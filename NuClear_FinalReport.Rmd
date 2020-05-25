@@ -2,23 +2,10 @@
 title: "鑑識情資於輻射監測數據之應用期末報告"
 output:
   html_document:
-    df_print: paged
-    toc: true
     fig_width: 13
     fig_height: 6
-    fig_caption: true
     keep_md: true 
-  pdf_document:
-    extra_dependencies:
-      ctexcap: UTF8
-    keep_tex: yes
-    latex_engine: xelatex
-    toc: true
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 
 #### 摘要
@@ -26,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 環境輻射監測數據除了作為評估公共衛生的標準外，也可讓民眾了解所在區域有多少量、多少種放射物質存在，並測試用於人類可接受輻射劑量的數學模型，以此預防更大不受監控的釋放或放射性的擴散釋放，並評估對生物群可能造成的影響。為了盡可能準確地掌握環境輻射監測數據的波動變化，故本計劃擷取二零一四年至二零一七年共四年環境輻射監測歷史數據進行敘述統計分析、趨勢變化分析等分析方法，找出不同的環境輻射監測站所監測到的環境輻射監測數據與不同的設立位置或監測時間的相關性，藉此研究其可能較高離群輻射值，並更進一步結合空氣品質監測公開資料，與環境輻射監測數據是否有相關性。
 
 
-```{r loading library and data, echo=FALSE, include=FALSE}
+```{r loading library and data}
 ## load reqired libraries ####
 library(readxl)
 library(xts)
@@ -59,7 +46,7 @@ mytheme <- theme_grey(base_family="STKaiti")
 
 本計劃的目的是找出不同的環境輻射監測站所監測到的環境輻射監測數據與不同的設立位置或監測時間的相關性，藉此研究其可能較高離群輻射值，故以原始資料中所提供的時間週期以及測站地點兩大方向進行探討。
 
-```{r rad_value summary, echo=TRUE, include=TRUE}
+```{r rad_value summary}
 summary(DF_l)
 ```
 
@@ -77,7 +64,7 @@ summary(DF_l)
 
 根據不同的時間週期，繪製出能體現環境輻射監測值的資料分佈的小提琴圖，並且加以深入分析。
 
-```{r add interval, echo=FALSE, include=FALSE}
+```{r add interval}
 # add interval For windows RData
 # DF_l$rad_value <- as.numeric(DF_l$rad_value)
 # DF$rad_value <- as.numeric(DF$rad_value)
@@ -89,7 +76,7 @@ DF_l$year <- year(DF_l$date)
 
 ```
 
-```{r daily dose rate, echo=FALSE, include=FALSE}
+```{r daily dose rate}
 DF_dailyBySite <- aggregate(rad_value ~ date_without_hour + rad_site, DF_l, FUN = sum) 
 
 DF_dailyBySite$year <- year(DF_dailyBySite$date_without_hour)
@@ -104,15 +91,15 @@ DF_dailyBySite$season <- factor(DF_dailyBySite$season, levels=c('春天','夏天
 DF_dailyBySite$DailyDoseRate <-  (DF_dailyBySite$rad_value)/24
 ```
 
-```{r violin_all, echo=FALSE, include=TRUE}
+```{r violin_all}
 ggplot(DF_dailyBySite, aes(x=factor(0), y=DailyDoseRate)) +  geom_violin() + geom_boxplot(width=.05, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(axis.ticks.x = element_blank()) + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +  theme(plot.title = element_text(hjust = 0.5)) + labs(y = "環境輻射監測值(毫西弗)")  + ggtitle("2014 ~ 2017年全台不分年不分站整體環境輻射監測小提琴圖") 
 ```
 
-```{r violin_year, echo=FALSE, include=TRUE}
+```{r violin_year}
 ggplot(DF_dailyBySite, aes(x=year, y=DailyDoseRate, group= year)) +  geom_violin() + geom_boxplot(width=.05, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + labs(y = "環境輻射監測值(毫西弗)", x = "2014 ~ 2017年") + ggtitle("2014 ~ 2017年分年不分站環境輻射監測小提琴圖") 
 ```
 
-```{r violin_season, echo=FALSE, include=TRUE}
+```{r violin_season}
 ggplot(DF_dailyBySite, aes(x=season, y=DailyDoseRate, group= season)) + geom_violin() + geom_boxplot(width=.1, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + labs(y = "環境輻射監測值(毫西弗)", x = "四季") + ggtitle("2014 ~ 2017年全台分季不分站環境輻射監測小提琴圖") 
 ```
 
@@ -128,7 +115,7 @@ ggplot(DF_dailyBySite, aes(x=season, y=DailyDoseRate, group= season)) + geom_vio
 
 以環境輻射監測站設立地點為出發點，搭配台灣地圖將各測站所在的地區及其監測到的數據使用不同顏色標記，若該地區設立複數個測站，則將該地區所有測站監測到的日劑量率加總除以該地區總測站數。根據此出發點，與小提琴圖類同進行以年和季為群組進行繪圖。
 
-```{r loading and preparing location information, echo=FALSE, include=FALSE}
+```{r loading and preparing location information}
 location <- read_excel("C:/Users/Christine Liou/Documents/Nuclear-Power/Data/station.xlsx", sheet=1)
 location <- location[, c(1:3, 15)]
 colnames(location) <- c("lon","lat","rad_site","id")
@@ -152,7 +139,7 @@ DF_inside_year=subset(DF_l, select=c('rad_site','rad_value','year'), subset=(ins
 DF_outside_year=subset(DF_l, select=c('rad_site','rad_value','year'), subset=(insideOrNot == '20km以外'))
 ```
 
-```{r year_inside_station , echo=FALSE, include=FALSE}
+```{r year_inside_station }
 DF_i2014=subset(DF_inside_year, select=c('rad_site','rad_value'), subset=(year == '2014'))
 DF_i2014=na.omit(DF_i2014)
 DF_i2015=subset(DF_inside_year, select=c('rad_site','rad_value'), subset=(year == '2015'))
@@ -186,7 +173,7 @@ DF_iyear_rad_mean <- rbind(DF_i2014_rad_mean,DF_i2015_rad_mean,DF_i2016_rad_mean
 DF_iyear_rad_mean$insideOrNot<-"20km以內"
 ```
 
-```{r year_outside_station , echo=FALSE, include=FALSE}
+```{r year_outside_station }
 #outside
 DF_o2014=subset(DF_outside_year, select=c('rad_site','rad_value'), subset=(year == '2014'))
 DF_o2014=na.omit(DF_o2014)
@@ -224,7 +211,7 @@ DF_oyear_rad_mean$insideOrNot<-"20km以外"
 DF_allyear_rad_mean <- rbind(DF_iyear_rad_mean,DF_oyear_rad_mean)
 ```
 
-```{r year_map_data , echo=FALSE, include=FALSE}
+```{r year_map_data}
 # 2014
 DF_i2014_rad_mean$insideOrNot<-"20km以內"
 DF_o2014_rad_mean$insideOrNot<-"20km以外"
@@ -250,7 +237,7 @@ DF_all2017_rad_mean <- rbind(DF_i2017_rad_mean,DF_o2017_rad_mean)
 DF_all2017_rad_mean$DailyDoseRate <-  (DF_all2017_rad_mean$rad_value)/24
 ```
 
-```{r year_map_draw , echo=FALSE, include=FALSE}
+```{r year_map_draw }
 # 2014
 DF_all2014_test=subset(DF_all2014_rad_mean, select=c('id','rad_value'))
 DF_all2014_test=aggregate(DF_all2014_test$rad_value, list(DF_all2014_test$id), mean)
@@ -284,7 +271,7 @@ final2017$DailyDoseRate <-  (final2017$rad_value)/24
 final2017=final2017[order(final2017$order),]
 ```
 
-```{r 2014_map_show , echo=FALSE, include=TRUE}
+```{r 2014_map_show }
 twcmap_2014 <- ggplot() +
   geom_polygon(data = final2014, 
                aes(x = long, y = lat, 
@@ -298,7 +285,7 @@ twcmap_2014 <- ggplot() +
 twcmap_2014
 ```
 
-```{r 2015_map_show , echo=FALSE, include=TRUE}
+```{r 2015_map_show }
 twcmap_2015<-ggplot() +
   geom_polygon(data = final2015, 
                aes(x = long, y = lat, 
@@ -312,7 +299,7 @@ twcmap_2015<-ggplot() +
 twcmap_2015
 ```
 
-```{r 2016_map_show , echo=FALSE, include=TRUE}
+```{r 2016_map_show }
 twcmap_2016<-ggplot() +
   geom_polygon(data = final2016, 
                aes(x = long, y = lat, 
@@ -326,7 +313,7 @@ twcmap_2016<-ggplot() +
 twcmap_2016
 ```
 
-```{r 2017_map_show , echo=FALSE, include=TRUE}
+```{r 2017_map_show }
 twcmap_2017<-ggplot() +
   geom_polygon(data = final2017, 
                aes(x = long, y = lat, 
@@ -340,7 +327,7 @@ twcmap_2017<-ggplot() +
 twcmap_2017
 ```
 
-```{r loading inside stations, echo=FALSE, include=FALSE}
+```{r loading inside stations}
 DF_iSpring=subset(DF_inside_season, select=c('rad_site','rad_value'), subset=(season == 'Spring'))
 DF_iSpring=na.omit(DF_iSpring)
 DF_iSummer=subset(DF_inside_season, select=c('rad_site','rad_value'), subset=(season == 'Summer'))
@@ -374,7 +361,7 @@ DF_iseason_rad_mean <- rbind(DF_iSpring_rad_mean,DF_iSummer_rad_mean,DF_iFall_ra
 DF_iseason_rad_mean$insideOrNot<-"20km以內"
 ```
 
-```{r map_outside, echo=FALSE, include=FALSE}
+```{r map_outside}
 DF_oSpring=subset(DF_outside_season, select=c('rad_site','rad_value'), subset=(season == 'Spring'))
 DF_oSpring=na.omit(DF_oSpring)
 DF_oSummer=subset(DF_outside_season, select=c('rad_site','rad_value'), subset=(season == 'Summer'))
@@ -408,11 +395,11 @@ DF_oseason_rad_mean <- rbind(DF_oSpring_rad_mean,DF_oSummer_rad_mean,DF_oFall_ra
 DF_oseason_rad_mean$insideOrNot<-"20km以外"
 ```
 
-```{r combine inside and outside , echo=FALSE, include=FALSE}
+```{r combine inside and outside}
 DF_allseason_rad_mean <- rbind(DF_iseason_rad_mean,DF_oseason_rad_mean)
 ```
 
-```{r season_map_data , echo=FALSE, include=FALSE}
+```{r season_map_data}
 # Spring
 DF_iSpring_rad_mean$insideOrNot<-"20km以內"
 DF_oSpring_rad_mean$insideOrNot<-"20km以外"
@@ -438,7 +425,7 @@ DF_allWinter_rad_mean <- rbind(DF_iWinter_rad_mean,DF_oWinter_rad_mean)
 DF_allWinter_rad_mean$DailyDoseRate <-  (DF_allWinter_rad_mean$rad_value)/24
 ```
 
-```{r season_map_draw , echo=FALSE, include=FALSE}
+```{r season_map_draw}
 # Spring
 DF_allSpring_test=subset(DF_allSpring_rad_mean, select=c('id','rad_value'))
 DF_allSpring_test=aggregate(DF_allSpring_test$rad_value, list(DF_allSpring_test$id), mean)
@@ -473,7 +460,7 @@ finalWinter$DailyDoseRate <-  (finalWinter$rad_value)/24
 finalWinter=finalWinter[order(finalWinter$order),]
 ```
 
-```{r spring_map_show , echo=FALSE, include=TRUE}
+```{r spring_map_show}
 twcmap_spring<-ggplot() +
   geom_polygon(data = finalSpring, 
                aes(x = long, y = lat, 
@@ -487,7 +474,7 @@ twcmap_spring<-ggplot() +
 twcmap_spring
 ```
 
-```{r summer_map_show , echo=FALSE, include=TRUE}
+```{r summer_map_show}
 twcmap_summer<-ggplot() +
   geom_polygon(data = finalSummer, 
                aes(x = long, y = lat, 
@@ -501,7 +488,7 @@ twcmap_summer<-ggplot() +
 twcmap_summer
 ```
 
-```{r fall_map_show , echo=FALSE, include=TRUE}
+```{r fall_map_show}
 twcmap_fall <- ggplot() +
   geom_polygon(data = finalFall, 
                aes(x = long, y = lat, 
@@ -515,7 +502,7 @@ twcmap_fall <- ggplot() +
 twcmap_fall
 ```
 
-```{r winter_map_show , echo=FALSE, include=TRUE}
+```{r winter_map_show}
 twcmap_winter <- ggplot() +
   geom_polygon(data = finalWinter, 
                aes(x = long, y = lat, 
@@ -536,7 +523,7 @@ twcmap_winter
 
 為了能更精準掌握環境輻射監測值變化的原因，本計畫增加行政院環境保護署所提供之歷年空氣品質監測公開資料，其總監測站數為七十六站，但在眾多測站中只抓取與環境輻射監測站相距半徑五公里內，符合警戒輻射範圍內的空氣品質監測站，故留下十七個與環境輻射監測站相對應的測站進行變數相關性分析。
 
-```{r air_value summary, echo=TRUE, include=TRUE}
+```{r air_value summary}
 summary(Air_DF_New)
 ```
 
@@ -567,20 +554,20 @@ summary(Air_DF_New)
     - PH_RAIN：酸雨酸鹼值，單位pH
     - RAIN_COND：酸雨導電度，單位μS/cm
 
-```{r outliers_pre, echo=FALSE, include=FALSE}
+```{r outliers_pre}
 out_stats <- boxplot.stats(DF_dailyBySite$DailyDoseRate)$out
 df_out_stats <- data.frame(matrix(unlist(out_stats), nrow=length(out_stats), byrow=T))
 names(df_out_stats) <- "outliers"
 df_out_stats <- df_out_stats[order(df_out_stats$outliers, decreasing = F), ] 
 ```
 
-```{r outliers, echo=TRUE, include=TRUE}
+```{r outliers}
 boxplot.stats(DF_dailyBySite$DailyDoseRate)$stats
 ```
 - 上方數值分別代表：最小值, 下四分位數, 中位數, 上四分位數, 1.5倍IQR
 
 - 門檻值以「82.37500」，1.5倍IQR的數值作為離群門檻值，另外再進一步根據此門檻抓出相對應的時間點及測站。
-```{r get outliers_stations, echo=TRUE, include=TRUE}
+```{r get outliers_stations}
 outliers_DF <- DF_dailyBySite[c(DF_dailyBySite$DailyDoseRate >= 82.37500), ]
 sort(table(outliers_DF$rad_site)) 
 ```

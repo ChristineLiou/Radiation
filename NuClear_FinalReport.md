@@ -1,17 +1,27 @@
 ---
-title: "鑑識情資於輻射監測數據之應用期末報告"
+title: "Application to the radiation monitoring data"
 output:
   html_document:
     fig_width: 13
     fig_height: 6
     keep_md: true 
 ---
+> Outline
 
+1. 摘要 Abstract
+2. 資料說明 About the data
+3. 小提琴圖 Violin Plot
+4. 地圖 Map
+5. 相關係數熱圖 Heatmap of correlaction Matrix
+6. 總結Summary
 
-#### 摘要
+# 1. 摘要 Abstract
 
-環境輻射監測數據除了作為評估公共衛生的標準外，也可讓民眾了解所在區域有多少量、多少種放射物質存在，並測試用於人類可接受輻射劑量的數學模型，以此預防更大不受監控的釋放或放射性的擴散釋放，並評估對生物群可能造成的影響。為了盡可能準確地掌握環境輻射監測數據的波動變化，故本計劃擷取二零一四年至二零一七年共四年環境輻射監測歷史數據進行敘述統計分析、趨勢變化分析等分析方法，找出不同的環境輻射監測站所監測到的環境輻射監測數據與不同的設立位置或監測時間的相關性，藉此研究其可能較高離群輻射值，並更進一步結合空氣品質監測公開資料，與環境輻射監測數據是否有相關性。
+「輻射監測數據」的目標是製定環境輻射/放射性分佈的系統數據，作為評估公共衛生的標準。以及當在發生輻射安全緊急情況的情況下，分析該數據對於維護國家安全和環境非常重要。輻射監測可以讓我們了解所在地區有多少和什麼樣的放射性物質存在，並測試用於估計人類輻射劑量的數學模型。
+本計劃擷取二零一四年至二零一七年共四年環境輻射監測歷史數據進行敘述統計分析、趨勢變化分析等分析方法，找出不同的環境輻射監測站所監測到的環境輻射監測數據與不同的設立位置或監測時間的相關性，並更進一步結合空氣品質監測公開資料，與環境輻射監測數據是否有關。
 
+The study of Radiation Monitoring Data can help to develop systematic data on environmental radiation/radioactivity distribution as a criterion for assessing public health. And in the event of a radiation safety emergency, the analysis of the data is important for maintaining national security and the environment. Radiation monitoring allows us to understand how much and what kind of radioactive material is present in the area and to test the mathematical model used to estimate the dose of human radiation.
+The project aims to find the correlation between different locations and monitoring time through the radiation monitoring historical data from 2014 to 2017. Besides, the air quality observation data are also analyzed to find the correlation with radiation.     
 
 
 ```r
@@ -202,11 +212,11 @@ load("~/Radiation/air_nuclear_wins.RData")
 mytheme <- theme_grey(base_family="STKaiti")
 ```
 
-#### 資料說明
+# 2. 資料說明 About the data
 
-本計劃使用行政院原子能委員會輻射偵測中心所提供之環境輻射監測歷史數據公開資料的時間週期為二零一四年至二零一七年，共四年資料。環境輻射監測的核設施包含核一廠、核二廠、核三廠、龍門核能電廠、核能研究所、清華大學及蘭嶼貯存場等七個設施。資料為每小時一筆資料，其單位為微西弗(µSv)。為了後續利於計算，故將全部輻射監測值統一乘於一千，換算成毫西弗(mSv)。
+本計劃使用行政院原子能委員會輻射偵測中心所提供之環境輻射監測歷史數據公開資料。環境輻射監測的核設施包含核一廠、核二廠、核三廠、龍門核能電廠、核能研究所、清華大學及蘭嶼貯存場等七個設施。資料為每小時一筆資料，其單位為微西弗(µSv)。為了後續利於計算，故將全部輻射監測值統一乘於一千，換算成毫西弗(mSv)。
 
-本計劃的目的是找出不同的環境輻射監測站所監測到的環境輻射監測數據與不同的設立位置或監測時間的相關性，藉此研究其可能較高離群輻射值，故以原始資料中所提供的時間週期以及測站地點兩大方向進行探討。
+Based on the radiation data from the Atomic Energy Council, there are seven nuclear facilities in Taiwan. The data was hourly recorded and measured by 'µSv'. We all transfer to 'mSv' to analyze. 
 
 
 ```r
@@ -237,15 +247,18 @@ summary(DF_l)
     - date : 日期，時間週期為二零一四至二零一八共四年資料，是以每小時為一筆紀錄。
     - rad_value：輻射值，單位為毫西弗(mSv)；如同輻射監測站，為了與空氣品質監測值做區分，故在輻射值資料表中以「rad_value」做表示。
     - alt：海拔，因各環境輻射測站所設置的位置不同，環境輻射監測可能也會受此影響，故將此環境因素也納入資料表中。
-    - airstation：空氣品質監測站，為了與空氣品質監測資料表做結合，以資料表中的空氣品質監測站做對應欄位，作為後續與空氣品質監測資料表合併時的主要欄位。
     - insideOrNot：是否在二十公里範圍內，因環境輻射監測值資料表是將七個設施週遭監測站全部包含在內，為了後續要進行地區劃分方便才加入此欄位。
 
+- The description of the columns: 
+   - rad_site：data collected place
+   - date : time (per hour)
+   - rad_value：recorded radiation values (mSv)
+   - alt：altitude of the data collected place
+   - insideOrNot：is the rad_site within 20 km with the seven nuclear facilities
+   
+# 3.小提琴圖 Violin Plot
 
-
-#### 由環境輻射監測時間週期為出發點進行探討
-
-根據不同的時間週期，繪製出能體現環境輻射監測值的資料分佈的小提琴圖，並且加以深入分析。
-
+資料前處理 Data preprocessing
 
 ```r
 # add interval For windows RData
@@ -266,162 +279,32 @@ DF_dailyBySite$year <- year(DF_dailyBySite$date_without_hour)
 DF_dailyBySite$month <- month(DF_dailyBySite$date_without_hour)
 
 # 比較符合當前氣候的季節月份對應(Spring: 3~5, Summer: 6~8, Fall: 9~11, Winter: 12~2)
-seamon <- data.frame(month=factor(1:12), season=c('冬天', '冬天', '春天', '春天', '春天', '夏天', '夏天', '夏天', '秋天', '秋天', '秋天', '冬天'))
+seamon <- data.frame(month=factor(1:12), season=c('Winter', 'Winter', 'Spring', 'Spring', 'Spring', 'Summer', 'Summer', 'Summer', 'Fall', 'Fall', 'Fall', 'Winter'))
 
 DF_dailyBySite <- merge(DF_dailyBySite, seamon, by = "month")
-DF_dailyBySite$season <- factor(DF_dailyBySite$season, levels=c('春天','夏天','秋天','冬天'))
+DF_dailyBySite$season <- factor(DF_dailyBySite$season, levels=c('Spring','Summer','Fall','Winter'))
 
 DF_dailyBySite$DailyDoseRate <-  (DF_dailyBySite$rad_value)/24
 ```
 
+根據不同的時間週期，繪製出能體現環境輻射監測值的資料分佈的小提琴圖，並且加以深入分析。
 
 ```r
-ggplot(DF_dailyBySite, aes(x=factor(0), y=DailyDoseRate)) +  geom_violin() + geom_boxplot(width=.05, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(axis.ticks.x = element_blank()) + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +  theme(plot.title = element_text(hjust = 0.5)) + labs(y = "環境輻射監測值(毫西弗)")  + ggtitle("2014 ~ 2017年全台不分年不分站整體環境輻射監測小提琴圖") 
-```
-
-```
-## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font
-## family not found in Windows font database
-
-## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font
-## family not found in Windows font database
-
-## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font
-## family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
+ggplot(DF_dailyBySite, aes(x=factor(0), y=DailyDoseRate)) +  geom_violin() + geom_boxplot(width=.05, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(axis.ticks.x = element_blank()) + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +  theme(plot.title = element_text(hjust = 0.5)) + labs(y = "Radiation values (mSv)")  + ggtitle("Violin Plot for four years") 
 ```
 
 ![](NuClear_FinalReport_files/figure-html/violin_all-1.png)<!-- -->
 
 
 ```r
-ggplot(DF_dailyBySite, aes(x=year, y=DailyDoseRate, group= year)) +  geom_violin() + geom_boxplot(width=.05, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + labs(y = "環境輻射監測值(毫西弗)", x = "2014 ~ 2017年") + ggtitle("2014 ~ 2017年分年不分站環境輻射監測小提琴圖") 
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
+ggplot(DF_dailyBySite, aes(x=year, y=DailyDoseRate, group= year)) +  geom_violin() + geom_boxplot(width=.05, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + labs(y = "Radiation values (mSv)", x = "Years") + ggtitle("Violin Plot in different years") 
 ```
 
 ![](NuClear_FinalReport_files/figure-html/violin_year-1.png)<!-- -->
 
 
 ```r
-ggplot(DF_dailyBySite, aes(x=season, y=DailyDoseRate, group= season)) + geom_violin() + geom_boxplot(width=.1, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + labs(y = "環境輻射監測值(毫西弗)", x = "四季") + ggtitle("2014 ~ 2017年全台分季不分站環境輻射監測小提琴圖") 
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
+ggplot(DF_dailyBySite, aes(x=season, y=DailyDoseRate, group= season)) + geom_violin() + geom_boxplot(width=.1, fill="gray", outlier.size = .5, outlier.colour = "red", na.rm = T) + stat_summary(fun.y=mean, geom="point", fill="white", shape=21, size=0.5) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + labs(y = "Radiation values (mSv)", x = "seasons") + ggtitle("Violin Plot in different seasons") 
 ```
 
 ![](NuClear_FinalReport_files/figure-html/violin_season-1.png)<!-- -->
@@ -434,10 +317,9 @@ ggplot(DF_dailyBySite, aes(x=season, y=DailyDoseRate, group= season)) + geom_vio
 
 - 以這三張圖來看，季節的變化對於環境輻射監測值的分佈並無明顯影響；以年作為觀測時間長度時，則有不同的分佈型態呈現。由此可見，日後可針對年週期作為取樣的時間週期標準。
 
-#### 由環境輻射監測站設立位置為出發點進行探討
+# 4. 地圖 Map
 
-以環境輻射監測站設立地點為出發點，搭配台灣地圖將各測站所在的地區及其監測到的數據使用不同顏色標記，若該地區設立複數個測站，則將該地區所有測站監測到的日劑量率加總除以該地區總測站數。根據此出發點，與小提琴圖類同進行以年和季為群組進行繪圖。
-
+資料前處理Data Preprocessing
 
 ```r
 location <- read_excel("C:/Users/Christine Liou/Documents/Nuclear-Power/Data/station.xlsx", sheet=1)
@@ -490,140 +372,14 @@ DF_outside_year=subset(DF_l, select=c('rad_site','rad_value','year'), subset=(in
 ```
 
 
-```r
-DF_i2014=subset(DF_inside_year, select=c('rad_site','rad_value'), subset=(year == '2014'))
-DF_i2014=na.omit(DF_i2014)
-DF_i2015=subset(DF_inside_year, select=c('rad_site','rad_value'), subset=(year == '2015'))
-DF_i2015=na.omit(DF_i2015)
-DF_i2016=subset(DF_inside_year, select=c('rad_site','rad_value'), subset=(year == '2016'))
-DF_i2016=na.omit(DF_i2016)
-DF_i2017=subset(DF_inside_year, select=c('rad_site','rad_value'), subset=(year == '2017'))
-DF_i2017=na.omit(DF_i2017)
-
-DF_i2014_rad_mean=aggregate(DF_i2014$rad_value, list(DF_i2014$rad_site), mean)
-colnames(DF_i2014_rad_mean) <- c("rad_site","rad_value")
-DF_i2014_rad_mean <- merge(DF_i2014_rad_mean, location, by = "rad_site")
-DF_i2014_rad_mean$year<-"2014"
-
-DF_i2015_rad_mean=aggregate(DF_i2015$rad_value, list(DF_i2015$rad_site), mean)
-colnames(DF_i2015_rad_mean) <- c("rad_site","rad_value")
-DF_i2015_rad_mean <- merge(DF_i2015_rad_mean, location, by = "rad_site")
-DF_i2015_rad_mean$year<-"2015"
-
-DF_i2016_rad_mean=aggregate(DF_i2016$rad_value, list(DF_i2016$rad_site), mean)
-colnames(DF_i2016_rad_mean) <- c("rad_site","rad_value")
-DF_i2016_rad_mean <- merge(DF_i2016_rad_mean, location, by = "rad_site")
-DF_i2016_rad_mean$year<-"2016"
-
-DF_i2017_rad_mean=aggregate(DF_i2017$rad_value, list(DF_i2017$rad_site), mean)
-colnames(DF_i2017_rad_mean) <- c("rad_site","rad_value")
-DF_i2017_rad_mean <- merge(DF_i2017_rad_mean, location, by = "rad_site")
-DF_i2017_rad_mean$year<-"2017"
-
-DF_iyear_rad_mean <- rbind(DF_i2014_rad_mean,DF_i2015_rad_mean,DF_i2016_rad_mean,DF_i2017_rad_mean)
-DF_iyear_rad_mean$insideOrNot<-"20km以內"
-```
 
 
-```r
-#outside
-DF_o2014=subset(DF_outside_year, select=c('rad_site','rad_value'), subset=(year == '2014'))
-DF_o2014=na.omit(DF_o2014)
-DF_o2015=subset(DF_outside_year, select=c('rad_site','rad_value'), subset=(year == '2015'))
-DF_o2015=na.omit(DF_o2015)
-DF_o2016=subset(DF_outside_year, select=c('rad_site','rad_value'), subset=(year == '2016'))
-DF_o2016=na.omit(DF_o2016)
-DF_o2017=subset(DF_outside_year, select=c('rad_site','rad_value'), subset=(year == '2017'))
-DF_o2017=na.omit(DF_o2017)
-
-DF_o2014_rad_mean=aggregate(DF_o2014$rad_value, list(DF_o2014$rad_site), mean)
-colnames(DF_o2014_rad_mean) <- c("rad_site","rad_value")
-DF_o2014_rad_mean <- merge(DF_o2014_rad_mean, location, by = "rad_site")
-DF_o2014_rad_mean$year<-"2014"
-
-DF_o2015_rad_mean=aggregate(DF_o2015$rad_value, list(DF_o2015$rad_site), mean)
-colnames(DF_o2015_rad_mean) <- c("rad_site","rad_value")
-DF_o2015_rad_mean <- merge(DF_o2015_rad_mean, location, by = "rad_site")
-DF_o2015_rad_mean$year<-"2015"
-
-DF_o2016_rad_mean=aggregate(DF_o2016$rad_value, list(DF_o2016$rad_site), mean)
-colnames(DF_o2016_rad_mean) <- c("rad_site","rad_value")
-DF_o2016_rad_mean <- merge(DF_o2016_rad_mean, location, by = "rad_site")
-DF_o2016_rad_mean$year<-"2016"
-
-DF_o2017_rad_mean=aggregate(DF_o2017$rad_value, list(DF_o2017$rad_site), mean)
-colnames(DF_o2017_rad_mean) <- c("rad_site","rad_value")
-DF_o2017_rad_mean <- merge(DF_o2017_rad_mean, location, by = "rad_site")
-DF_o2017_rad_mean$year<-"2017"
-
-DF_oyear_rad_mean <- rbind(DF_o2014_rad_mean,DF_o2015_rad_mean,DF_o2016_rad_mean,DF_o2017_rad_mean)
-DF_oyear_rad_mean$insideOrNot<-"20km以外"
-
-#combine
-DF_allyear_rad_mean <- rbind(DF_iyear_rad_mean,DF_oyear_rad_mean)
-```
 
 
-```r
-# 2014
-DF_i2014_rad_mean$insideOrNot<-"20km以內"
-DF_o2014_rad_mean$insideOrNot<-"20km以外"
-DF_all2014_rad_mean <- rbind(DF_i2014_rad_mean,DF_o2014_rad_mean)
-DF_all2014_rad_mean$DailyDoseRate <-  (DF_all2014_rad_mean$rad_value)/24
-
-# 2015
-DF_i2015_rad_mean$insideOrNot<-"20km以內"
-DF_o2015_rad_mean$insideOrNot<-"20km以外"
-DF_all2015_rad_mean <- rbind(DF_i2015_rad_mean,DF_o2015_rad_mean)
-DF_all2015_rad_mean$DailyDoseRate <-  (DF_all2015_rad_mean$rad_value)/24
-
-# 2016
-DF_i2016_rad_mean$insideOrNot<-"20km以內"
-DF_o2016_rad_mean$insideOrNot<-"20km以外"
-DF_all2016_rad_mean <- rbind(DF_i2016_rad_mean,DF_o2016_rad_mean)
-DF_all2016_rad_mean$DailyDoseRate <-  (DF_all2016_rad_mean$rad_value)/24
-
-# 2017
-DF_i2017_rad_mean$insideOrNot<-"20km以內"
-DF_o2017_rad_mean$insideOrNot<-"20km以外"
-DF_all2017_rad_mean <- rbind(DF_i2017_rad_mean,DF_o2017_rad_mean)
-DF_all2017_rad_mean$DailyDoseRate <-  (DF_all2017_rad_mean$rad_value)/24
-```
 
 
-```r
-# 2014
-DF_all2014_test=subset(DF_all2014_rad_mean, select=c('id','rad_value'))
-DF_all2014_test=aggregate(DF_all2014_test$rad_value, list(DF_all2014_test$id), mean)
-colnames(DF_all2014_test) <- c("id","rad_value")
-final2014=merge(tw_new.df,DF_all2014_test,by="id",all.x=T)
-final2014$DailyDoseRate <-  (final2014$rad_value)/24
-final2014=final2014[order(final2014$order),]
 
-# 2015
-DF_all2015_test=subset(DF_all2015_rad_mean, select=c('id','rad_value'))
-DF_all2015_test=aggregate(DF_all2015_test$rad_value, list(DF_all2015_test$id), mean)
-colnames(DF_all2015_test) <- c("id","rad_value")
-final2015=merge(tw_new.df,DF_all2015_test,by="id",all.x=T)
-final2015$DailyDoseRate <-  (final2015$rad_value)/24
-final2015=final2015[order(final2015$order),]
-
-# 2016
-DF_all2016_test=subset(DF_all2016_rad_mean, select=c('id','rad_value'))
-DF_all2016_test=aggregate(DF_all2016_test$rad_value, list(DF_all2016_test$id), mean)
-colnames(DF_all2016_test) <- c("id","rad_value")
-final2016=merge(tw_new.df,DF_all2016_test,by="id",all.x=T)
-final2016$DailyDoseRate <-  (final2016$rad_value)/24
-final2016=final2016[order(final2016$order),]
-
-# 2017
-DF_all2017_test=subset(DF_all2017_rad_mean, select=c('id','rad_value'))
-DF_all2017_test=aggregate(DF_all2017_test$rad_value, list(DF_all2017_test$id), mean)
-colnames(DF_all2017_test) <- c("id","rad_value")
-final2017=merge(tw_new.df,DF_all2017_test,by="id",all.x=T)
-final2017$DailyDoseRate <-  (final2017$rad_value)/24
-final2017=final2017[order(final2017$order),]
-```
+以環境輻射監測站設立地點為出發點，搭配台灣地圖將各測站所在的地區及其監測到的數據使用不同顏色標記，若該地區設立複數個測站，則將該地區所有測站監測到的日劑量率加總除以該地區總測站數。根據此出發點，與小提琴圖類同進行以年和季為群組進行繪圖。
 
 
 ```r
@@ -636,62 +392,8 @@ twcmap_2014 <- ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2014年全台整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in 2014", x = "Longitude", y = "Latitude")
 twcmap_2014
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/2014_map_show-1.png)<!-- -->
@@ -707,62 +409,8 @@ twcmap_2015<-ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2015年全台整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in 2015", x = "Longitude", y = "Latitude")
 twcmap_2015
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/2015_map_show-1.png)<!-- -->
@@ -778,62 +426,8 @@ twcmap_2016<-ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2016年全台整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in 2016", x = "Longitude", y = "Latitude")
 twcmap_2016
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/2016_map_show-1.png)<!-- -->
@@ -849,203 +443,21 @@ twcmap_2017<-ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2017年全台整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in 2017", x = "Longitude", y = "Latitude")
 twcmap_2017
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/2017_map_show-1.png)<!-- -->
 
 
-```r
-DF_iSpring=subset(DF_inside_season, select=c('rad_site','rad_value'), subset=(season == 'Spring'))
-DF_iSpring=na.omit(DF_iSpring)
-DF_iSummer=subset(DF_inside_season, select=c('rad_site','rad_value'), subset=(season == 'Summer'))
-DF_iSummer=na.omit(DF_iSummer)
-DF_iFall=subset(DF_inside_season, select=c('rad_site','rad_value'), subset=(season == 'Fall'))
-DF_iFall=na.omit(DF_iFall)
-DF_iWinter=subset(DF_inside_season, select=c('rad_site','rad_value'), subset=(season == 'Winter'))
-DF_iWinter=na.omit(DF_iWinter)
-
-DF_iSpring_rad_mean=aggregate(DF_iSpring$rad_value, list(DF_iSpring$rad_site), mean)
-colnames(DF_iSpring_rad_mean) <- c("rad_site","rad_value")
-DF_iSpring_rad_mean <- merge(DF_iSpring_rad_mean, location, by = "rad_site")
-DF_iSpring_rad_mean$season<-"Spring"
-
-DF_iSummer_rad_mean=aggregate(DF_iSummer$rad_value, list(DF_iSummer$rad_site), mean)
-colnames(DF_iSummer_rad_mean) <- c("rad_site","rad_value")
-DF_iSummer_rad_mean <- merge(DF_iSummer_rad_mean, location, by = "rad_site")
-DF_iSummer_rad_mean$season<-"Summer"
-
-DF_iFall_rad_mean=aggregate(DF_iFall$rad_value, list(DF_iFall$rad_site), mean)
-colnames(DF_iFall_rad_mean) <- c("rad_site","rad_value")
-DF_iFall_rad_mean <- merge(DF_iFall_rad_mean, location, by = "rad_site")
-DF_iFall_rad_mean$season<-"Fall"
-
-DF_iWinter_rad_mean=aggregate(DF_iWinter$rad_value, list(DF_iWinter$rad_site), mean)
-colnames(DF_iWinter_rad_mean) <- c("rad_site","rad_value")
-DF_iWinter_rad_mean <- merge(DF_iWinter_rad_mean, location, by = "rad_site")
-DF_iWinter_rad_mean$season<-"Winter"
-
-DF_iseason_rad_mean <- rbind(DF_iSpring_rad_mean,DF_iSummer_rad_mean,DF_iFall_rad_mean,DF_iWinter_rad_mean)
-DF_iseason_rad_mean$insideOrNot<-"20km以內"
-```
 
 
-```r
-DF_oSpring=subset(DF_outside_season, select=c('rad_site','rad_value'), subset=(season == 'Spring'))
-DF_oSpring=na.omit(DF_oSpring)
-DF_oSummer=subset(DF_outside_season, select=c('rad_site','rad_value'), subset=(season == 'Summer'))
-DF_oSummer=na.omit(DF_oSummer)
-DF_oFall=subset(DF_outside_season, select=c('rad_site','rad_value'), subset=(season == 'Fall'))
-DF_oFall=na.omit(DF_oFall)
-DF_oWinter=subset(DF_outside_season, select=c('rad_site','rad_value'), subset=(season == 'Winter'))
-DF_oWinter=na.omit(DF_oWinter)
-
-DF_oSpring_rad_mean=aggregate(DF_oSpring$rad_value, list(DF_oSpring$rad_site), mean)
-colnames(DF_oSpring_rad_mean) <- c("rad_site","rad_value")
-DF_oSpring_rad_mean <- merge(DF_oSpring_rad_mean, location, by = "rad_site")
-DF_oSpring_rad_mean$season<-"Spring"
-
-DF_oSummer_rad_mean=aggregate(DF_oSummer$rad_value, list(DF_oSummer$rad_site), mean)
-colnames(DF_oSummer_rad_mean) <- c("rad_site","rad_value")
-DF_oSummer_rad_mean <- merge(DF_oSummer_rad_mean, location, by = "rad_site")
-DF_oSummer_rad_mean$season<-"Summer"
-
-DF_oFall_rad_mean=aggregate(DF_oFall$rad_value, list(DF_oFall$rad_site), mean)
-colnames(DF_oFall_rad_mean) <- c("rad_site","rad_value")
-DF_oFall_rad_mean <- merge(DF_oFall_rad_mean, location, by = "rad_site")
-DF_oFall_rad_mean$season<-"Fall"
-
-DF_oWinter_rad_mean=aggregate(DF_oWinter$rad_value, list(DF_oWinter$rad_site), mean)
-colnames(DF_oWinter_rad_mean) <- c("rad_site","rad_value")
-DF_oWinter_rad_mean <- merge(DF_oWinter_rad_mean, location, by = "rad_site")
-DF_oWinter_rad_mean$season<-"Winter"
-
-DF_oseason_rad_mean <- rbind(DF_oSpring_rad_mean,DF_oSummer_rad_mean,DF_oFall_rad_mean,DF_oWinter_rad_mean)
-DF_oseason_rad_mean$insideOrNot<-"20km以外"
-```
 
 
-```r
-DF_allseason_rad_mean <- rbind(DF_iseason_rad_mean,DF_oseason_rad_mean)
-```
 
 
-```r
-# Spring
-DF_iSpring_rad_mean$insideOrNot<-"20km以內"
-DF_oSpring_rad_mean$insideOrNot<-"20km以外"
-DF_allSpring_rad_mean <- rbind(DF_iSpring_rad_mean,DF_oSpring_rad_mean)
-DF_allSpring_rad_mean$DailyDoseRate <-  (DF_allSpring_rad_mean$rad_value)/24
-
-# Summer
-DF_iSummer_rad_mean$insideOrNot<-"20km以內"
-DF_oSummer_rad_mean$insideOrNot<-"20km以外"
-DF_allSummer_rad_mean <- rbind(DF_iSummer_rad_mean,DF_oSummer_rad_mean)
-DF_allSummer_rad_mean$DailyDoseRate <-  (DF_allSummer_rad_mean$rad_value)/24
-
-# Fall
-DF_iFall_rad_mean$insideOrNot<-"20km以內"
-DF_oFall_rad_mean$insideOrNot<-"20km以外"
-DF_allFall_rad_mean <- rbind(DF_iFall_rad_mean,DF_oFall_rad_mean)
-DF_allFall_rad_mean$DailyDoseRate <-  (DF_allFall_rad_mean$rad_value)/24
-
-# Winter
-DF_iWinter_rad_mean$insideOrNot<-"20km以內"
-DF_oWinter_rad_mean$insideOrNot<-"20km以外"
-DF_allWinter_rad_mean <- rbind(DF_iWinter_rad_mean,DF_oWinter_rad_mean)
-DF_allWinter_rad_mean$DailyDoseRate <-  (DF_allWinter_rad_mean$rad_value)/24
-```
 
 
-```r
-# Spring
-DF_allSpring_test=subset(DF_allSpring_rad_mean, select=c('id','rad_value'))
-DF_allSpring_test=aggregate(DF_allSpring_test$rad_value, list(DF_allSpring_test$id), mean)
-colnames(DF_allSpring_test) <- c("id","rad_value")
-finalSpring=merge(tw_new.df,DF_allSpring_test,by="id",all.x=T)
-finalSpring$DailyDoseRate <-  (finalSpring$rad_value)/24
-finalSpring=finalSpring[order(finalSpring$order),]
-
-# Summer
-DF_allSummer_test=subset(DF_allSummer_rad_mean, select=c('id','rad_value'))
-DF_allSummer_test=aggregate(DF_allSummer_test$rad_value, list(DF_allSummer_test$id), mean)
-colnames(DF_allSummer_test) <- c("id","rad_value")
-finalSummer=merge(tw_new.df,DF_allSummer_test,by="id",all.x=T)
-finalSummer$DailyDoseRate <-  (finalSummer$rad_value)/24
-finalSummer=finalSummer[order(finalSummer$order),]
-
-# Fall
-DF_allFall_test=subset(DF_allFall_rad_mean, select=c('id','rad_value'))
-DF_allFall_test=aggregate(DF_allFall_test$rad_value, list(DF_allFall_test$id), mean)
-colnames(DF_allFall_test) <- c("id","rad_value")
-finalFall=merge(tw_new.df,DF_allFall_test,by="id",all.x=T)
-finalFall$DailyDoseRate <-  (finalFall$rad_value)/24
-finalFall=finalFall[order(finalFall$order),]
-
-# Winter
-DF_allWinter_test=subset(DF_allWinter_rad_mean, select=c('id','rad_value'))
-DF_allWinter_test=aggregate(DF_allWinter_test$rad_value, list(DF_allWinter_test$id), mean)
-colnames(DF_allWinter_test) <- c("id","rad_value")
-finalWinter=merge(tw_new.df,DF_allWinter_test,by="id",all.x=T)
-#finalWinter$rad_value[is.na(finalWinter$rad_value)] <- 0
-finalWinter$DailyDoseRate <-  (finalWinter$rad_value)/24
-finalWinter=finalWinter[order(finalWinter$order),]
-```
 
 
 ```r
@@ -1058,62 +470,8 @@ twcmap_spring<-ggplot() +
                size = 0.25)  +
   coord_map() + #維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2014 ~ 2017年全台春季整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in Spring", x = "Longitude", y = "Latitude")
 twcmap_spring
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/spring_map_show-1.png)<!-- -->
@@ -1129,62 +487,8 @@ twcmap_summer<-ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2014 ~ 2017年全台夏季整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in Summer", x = "Longitude", y = "Latitude")
 twcmap_summer
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/summer_map_show-1.png)<!-- -->
@@ -1200,62 +504,8 @@ twcmap_fall <- ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2014 ~ 2017年全台秋季整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in Fall", x = "Longitude", y = "Latitude")
 twcmap_fall
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/fall_map_show-1.png)<!-- -->
@@ -1271,70 +521,15 @@ twcmap_winter <- ggplot() +
                size = 0.25) + 
   coord_map()+#維持地圖比例
   scale_fill_gradientn(colours = brewer.pal(11,"Spectral"),na.value = NA) + mytheme + theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title="2014 ~ 2017年全台冬季整體環境輻射監測值分佈地圖", x = "經度", y = "緯度")
+  labs(title="Mean of radiation values in Winter", x = "Longitude", y = "Latitude")
 twcmap_winter
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x,
-## x$y, : font family not found in Windows font database
-```
-
-```
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
 ```
 
 ![](NuClear_FinalReport_files/figure-html/winter_map_show-1.png)<!-- -->
 
-- 圖四至圖七四張「分年全台整體環境輻射監測值分佈地圖」所示，北部地區在四年期間中的顏色有不同的變化，結合於小提琴圖所發現的結果：日後除了以「年」作為取樣時間週期標準外，可以搭配環境輻射監測站所在的地區進行抽樣範圍參考。
-- 圖八至圖十一四張「全台分季整體環境輻射監測值分佈地圖」所示，四季對於全台的輻射值沒有太大的影響，此現象也可應證在小提琴圖的部分所顯示的結果。
 
-#### 結合空氣品質監測資料
+
+# 5. 相關係數熱圖 Heatmap of correlaction Matrix
 
 為了能更精準掌握環境輻射監測值變化的原因，本計畫增加行政院環境保護署所提供之歷年空氣品質監測公開資料，其總監測站數為七十六站，但在眾多測站中只抓取與環境輻射監測站相距半徑五公里內，符合警戒輻射範圍內的空氣品質監測站，故留下十七個與環境輻射監測站相對應的測站進行變數相關性分析。
 
@@ -1557,7 +752,7 @@ dim(correlations)
 
 ```r
 corrplot(corr= correlations,order = "hclust",type="upper",tl.pos = "tp",tl.cex = 1) 
-corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="恆春整體相關性熱圖")
+corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="Hengchun Heatmap of correlaction Matrix")
 ```
 
 ![](NuClear_FinalReport_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
@@ -1576,7 +771,7 @@ dim(correlations)
 
 ```r
 corrplot(corr= correlations,order = "hclust",type="upper",tl.pos = "tp",tl.cex = 1) 
-corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="恆春春天相關性熱圖")
+corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="Hengchun Heatmap of correlaction Matrix in Spring")
 ```
 
 ![](NuClear_FinalReport_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
@@ -1595,7 +790,7 @@ dim(correlations)
 
 ```r
 corrplot(corr= correlations,order = "hclust",type="upper",tl.pos = "tp",tl.cex = 1) 
-corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="恆春夏天相關性熱圖")
+corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="Hengchun Heatmap of correlaction Matrix in Summer")
 ```
 
 ![](NuClear_FinalReport_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
@@ -1613,7 +808,7 @@ dim(correlations)
 
 ```r
 corrplot(corr= correlations,order = "hclust",type="upper",tl.pos = "tp",tl.cex = 1) 
-corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="恆春秋天相關性熱圖")
+corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="Hengchun Heatmap of correlaction Matrix in Fall")
 ```
 
 ![](NuClear_FinalReport_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
@@ -1631,7 +826,7 @@ dim(correlations)
 
 ```r
 corrplot(corr= correlations,order = "hclust",type="upper",tl.pos = "tp",tl.cex = 1) 
-corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="恆春冬天相關性熱圖")
+corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclust",diag=FALSE,tl.pos="n", cl.pos="n", tl.cex = 1,number.cex=0.7,title ="Hengchun Heatmap of correlaction Matrix in Winter")
 ```
 
 ![](NuClear_FinalReport_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
@@ -1639,7 +834,7 @@ corrplot(corr = correlations,add=TRUE, type="lower", method="number",order="hclu
 - 根據「恆春的變數相關性熱圖」所示，一氧化氮與輻射值呈現相對的正相關，而二氧化硫則是呈現相對負相關。由此可見當空氣中的一氧化氮升高時，環境輻射值也會相對升高；反之，二氧化硫升高時，環境輻射值會相對降低。根據此現象可進一步與會產生這兩種化合物氣體來源深入分析並加以利用、取樣研究。
 
 
-#### 總結
+# 6. 總結 Summary
 1. 根據以監測時間週期作為出發點的分析結果可推斷出「季節」對於環境輻射監測值起伏變化沒有較大的影響，反而是以「年」作為取樣週期對於環境輻射監測值起伏變化較有明顯的影響。由此可見在日後進行取樣時，可根據「年」進行。
 2. 根據以環境輻射監測站設立位置作為出發點的分析結果可推斷出監測站所在的「地區」對於環境輻射監測值起伏變化有較明顯的影響，進一步也推斷出海拔愈高，監測到的環境輻射監測值也會相對的上升。由此可見在日後進行取樣時，可根據「地區」及「海拔」進行。
 3. 根據小提琴圖可顯示出，無論在四年的時間週期，或四季的時間週期下，所監測到的環境輻射值皆沒有超過國人可能接受個人體外劑量的合法規劑量限值：個人體外劑量小於每季0.025毫西弗；體內劑量小於每季0.001毫西弗。

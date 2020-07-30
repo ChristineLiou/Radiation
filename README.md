@@ -7,6 +7,11 @@ The project aims to find the correlation between different locations and monitor
 - Violin Plot
 - Map
 - Heatmap of correlaction Matrix
-- Summary
+
+
+# File description
+- NuClear_FinalReport.Rmd: Rmarkdown file for the whoud project.
+
+# Summary
 
 #### Data Resource: Atomic Energy Council

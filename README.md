@@ -10,7 +10,7 @@ The project aims to find the correlation between different locations and monitor
 
 
 # File description
-- NuClear_FinalReport.Rmd: Rmarkdown file for the whoud project.
+- NuClear_FinalReport.Rmd: Rmarkdown file for the whole project.
 
 # Summary
 

@@ -13,5 +13,6 @@ The project aims to find the correlation between different locations and monitor
 - NuClear_FinalReport.Rmd: Rmarkdown file for the whole project.
 
 # Summary
-
+The result shows that the radiation monitoring data doesn't have any difference in seasons. However, the altitude does have some effect on the radiation monitoring rate. 
+On the other side, there is no strong correlation between the radiation rate and air quality. 
 #### Data Resource: Atomic Energy Council
